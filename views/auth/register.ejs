@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+
+<section class="register-section">
+  <div class="register-container">
+    <h2>Create Your Account</h2>
+    <% if (locals.error) { %>
+      <div class="error-message"><%= error %></div>
+    <% } %>
+    <p class="subtitle">Join CareConnect and manage your health with ease.</p>
+
+    <form method="POST" action="/register" class="register-form">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Full Name" required />
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="Email Address" required />
+      </div>
+      <div class="form-group">
+        <input type="password" name="password" placeholder="Create Password" required />
+      </div>
+      <div class="form-group">
+        <select name="role" id="role" required onchange="toggleDoctorFields()">
+          <option value="" disabled selected>Select Role</option>
+          <option value="patient">Patient</option>
+          <option value="doctor">Doctor</option>
+        </select>
+      </div>
+
+      <!-- Doctor specific fields -->
+      <div id="doctorFields" style="display: none;">
+        <div class="form-group">
+          <input type="text" name="specialization" placeholder="Specialization" />
+        </div>
+        <div class="form-group">
+          <input type="number" name="experience" placeholder="Years of Experience" />
+        </div>
+        <div class="form-group">
+          <input type="text" name="contact" placeholder="Contact Number" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-register">Register</button>
+    </form>
+
+    <p class="login-link">Already have an account? <a href="/login">Login here</a></p>
+  </div>
+
+  <script>
+    function toggleDoctorFields() {
+      const role = document.getElementById('role').value;
+      const doctorFields = document.getElementById('doctorFields');
+      doctorFields.style.display = role === 'doctor' ? 'block' : 'none';
+      
+      const doctorInputs = doctorFields.getElementsByTagName('input');
+      for (let input of doctorInputs) {
+        input.required = role === 'doctor';
+      }
+    }
+  </script>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,28 @@
+<head>
+  <meta charset="UTF-8">
+  <title>CareConnect Hospital</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<header class="main-header">
+  <div class="container">
+    <div class="logo">
+      <img src="/images/logo.webp" alt="Hospital Logo" />
+      <span>CareConnect</span>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <li><a href="/appointments/book">Book Appointment</a></li>
+          <li><a href="/doctors">Doctors</a></li>
+          <li><span>Welcome, <%= user.name %></span></li>
+          <li><a href="/logout">Logout</a></li>
+        <% } else { %>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/register">Register</a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+
+<section class="appointment-section">
+  <div class="appointment-container">
+    <h2>Book an Appointment</h2>
+    <% if (locals.error) { %>
+      <div class="error-message"><%= error %></div>
+    <% } %>
+    <p class="subtitle">Schedule your consultation with our expert doctors.</p>
+
+    <form method="POST" action="/appointments/book" class="appointment-form">
+      <div class="form-group">
+        <input type="text" name="patientName" value="<%= user.name %>" readonly />
+      </div>
+      
+      <div class="form-group">
+        <select name="doctorId" required <%= selectedDoctor ? 'disabled' : '' %>>
+          <option value="">Select a Doctor</option>
+          <% doctors.forEach(doctor => { %>
+            <option value="<%= doctor.id %>" 
+              <%= (selectedDoctor && selectedDoctor._id.toString() === doctor.id.toString()) ? 'selected' : '' %>>
+              <%= doctor.name %> - <%= doctor.specialization %>
+            </option>
+          <% }) %>
+        </select>
+        <% if (selectedDoctor) { %>
+          <input type="hidden" name="doctorId" value="<%= selectedDoctor._id %>">
+        <% } %>
+      </div>
+
+      <div class="form-group">
+        <input type="datetime-local" name="date" required />
+      </div>
+
+      <button type="submit" class="btn-book">Book Appointment</button>
+    </form>
+  </div>
+</section>
+
+
+
+<%- include('../partials/footer') %>  

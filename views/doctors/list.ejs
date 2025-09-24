@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+
+<section class="list-section">
+  <div class="list-container">
+    <h2>Our Doctors</h2>
+
+    <div class="doctor-list">
+      <% doctors.forEach(doctor => { %>
+        <div class="doctor-card">
+          <h3><%= doctor.name %></h3>
+          <p><strong>Specialization:</strong> <%= doctor.specialization %></p>
+          <p><strong>Experience:</strong> <%= doctor.experience %> years</p>
+          <p><strong>Contact:</strong> 📞 <%= doctor.contact %></p>
+          
+          <% if (user && user.role === 'patient') { %>  <!-- Only show booking button for patients -->
+            <a href="/appointments/book?doctorId=<%= doctor._id %>" class="btn-book-appointment">
+              Book Appointment
+            </a>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="doctor-actions">
+      <% if (user && (user.role === 'admin' || user.role === 'doctor')) { %>
+        <a href="/doctors/add" class="add-doctor-link">Add New Doctor</a>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,63 @@
+<%- include('partials/header') %>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Your Health, Our Priority</h1>
+      <p>Book appointments with trusted doctors, manage your health, and stay informed—all in one place.</p>
+      <div class="hero-buttons">
+        <a href="/register" class="btn">Get Started</a>
+        <a href="/login" class="btn btn-outline">Already Registered?</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="/images/home.jpg" alt="Doctors Team">
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="feature">
+      <h3>🩺 Expert Doctors</h3>
+      <p>Connect with certified specialists across departments.</p>
+    </div>
+    <div class="feature">
+      <h3>📅 Easy Booking</h3>
+      <p>Schedule appointments in just a few clicks.</p>
+    </div>
+    <div class="feature">
+      <h3>🔒 Secure System</h3>
+      <p>Your health data is protected and confidential.</p>
+    </div>
+  </section>
+  <section class="doctor-section">
+  <div class="doctor-container">
+    <h2>Meet Our Expert Doctors</h2>
+    <div class="doctor-cards">
+      <% doctors.forEach(doc => { %>
+        <div class="doctor-card">
+          <h3><%= doc.name %></h3>
+          <p><strong>🔬 Specialization:</strong> <%= doc.specialization %></p>
+          <p><strong>⭐ Experience:</strong> <%= doc.experience %> years</p>
+          <p><strong>📱 Contact:</strong> <%= doc.contact %></p>
+          <% if (user && user.role === 'patient') { %>  <!-- Only show booking button for patients -->
+            <a href="/appointments/book?doctorId=<%= doc._id %>" class="btn-book-appointment">
+              Book Appointment
+            </a>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+    <div class="doctor-actions">
+      <div class="doctor-buttons">
+        <a href="/doctors" class="btn-view-all">View All Doctors</a>
+        <% if (user && (user.role === 'admin' || user.role === 'doctor')) { %>
+          <a href="/doctors/add" class="btn-add-doctor">Add Doctor</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <%- include('partials/footer') %>
+
+

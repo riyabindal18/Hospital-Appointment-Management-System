@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+
+<section class="form-section">
+  <div class="form-container">
+    <h2>Add New Doctor</h2>
+    <form method="POST" action="/doctors/add">
+      <input type="text" name="name" placeholder="Doctor Name" required />
+      <input type="text" name="specialization" placeholder="Specialization" required />
+      <input type="number" name="experience" placeholder="Years of Experience" required />
+      <input type="text" name="contact" placeholder="Contact Number" required />
+      <button type="submit">Add Doctor</button>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
