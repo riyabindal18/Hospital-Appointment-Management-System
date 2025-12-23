@@ -61,6 +61,10 @@ app.get('/', async (req, res) => {
 app.use('/', require('./routes/authRoutes'));
 app.use('/appointments', require('./routes/appointmentRoutes'));
 app.use('/doctors', doctorRoutes);
+app.use('/patient', require('./routes/patientRoutes'));
+app.use('/admin', require('./routes/adminRoutes'));
+app.use('/feedback', require('./routes/feedbackRoutes'));
+app.use('/medical-records', require('./routes/medicalRecordRoutes'));
 
 
 const PORT = process.env.PORT || 3000;

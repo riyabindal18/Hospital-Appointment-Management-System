@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Reports</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+    <style>
+        .report-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .report-section h2 {
+            color: #00796b;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0f2f1;
+            padding-bottom: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #00796b;
+        }
+        .stat-box h3 {
+            margin: 0 0 5px 0;
+            color: #00796b;
+            font-size: 2em;
+        }
+        .stat-box p {
+            margin: 0;
+            color: #666;
+            font-weight: 600;
+        }
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #00796b;
+            color: white;
+        }
+        .performance-good {
+            color: #28a745;
+        }
+        .performance-average {
+            color: #ffc107;
+        }
+        .performance-low {
+            color: #dc3545;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .page-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .report-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+        .report-section h2 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 1.6em;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-box:hover {
+            transform: translateY(-3px);
+        }
+        .stat-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+        }
+        .stat-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .stat-content p {
+            margin: 0;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .data-table-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #00796b, #009688);
+            color: white;
+        }
+
+        .header-icon {
+            margin-right: 8px;
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .count-badge, .rate-badge {
+            background: #00796b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .performance-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .performance-badge.excellent {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .performance-badge.good {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+            color: white;
+        }
+
+        .performance-badge.needs-improvement {
+            background: linear-gradient(45deg, #dc3545, #e83e8c);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .data-table-container {
+                overflow-x: auto;
+            }
+            .data-table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-bar"></i> System Reports & Analytics</h1>
+            <p>Comprehensive insights into system performance and trends</p>
+        </div>
+
+        <!-- Appointment Statistics -->
+        <div class="report-section">
+            <h2><i class="fas fa-calendar-alt"></i> Appointment Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box total">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.totalAppointments %></h3>
+                        <p>Total Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-box confirmed">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.confirmedAppointments %></h3>
+                        <p>Confirmed</p>
+                    </div>
+                </div>
+                <div class="stat-box pending">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.pendingAppointments %></h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-box cancelled">
+                    <div class="stat-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><%= stats.cancelledAppointments %></h3>
+                        <p>Cancelled</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Trends -->
+        <div class="report-section">
+            <h2><i class="fas fa-chart-line"></i> Monthly Appointment Trends (Last 6 Months)</h2>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><span class="header-icon"><i class="fas fa-calendar"></i></span> Month</th>
+                            <th><span class="header-icon"><i class="fas fa-chart-bar"></i></span> Appointments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% monthlyAppointments.forEach(month => { %>
+                            <tr>
+                                <td><%= month._id.year %>-<%= String(month._id.month).padStart(2, '0') %></td>
+                                <td><span class="count-badge"><%= month.count %></span></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Doctor Performance -->
+        <div class="report-section">
+            <h2><i class="fas fa-user-md"></i> Doctor Performance</h2>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><span class="header-icon"><i class="fas fa-user"></i></span> Doctor Name</th>
+                            <th><span class="header-icon"><i class="fas fa-chart-bar"></i></span> Total Appointments</th>
+                            <th><span class="header-icon"><i class="fas fa-check"></i></span> Confirmed</th>
+                            <th><span class="header-icon"><i class="fas fa-percentage"></i></span> Confirmation Rate</th>
+                            <th><span class="header-icon"><i class="fas fa-trophy"></i></span> Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% doctorStats.forEach(doctor => { %>
+                            <% const rate = doctor.totalAppointments > 0 ? Math.round((doctor.confirmedAppointments / doctor.totalAppointments) * 100) : 0; %>
+                            <tr>
+                                <td class="doctor-name"><%= doctor.doctorName %></td>
+                                <td><%= doctor.totalAppointments %></td>
+                                <td><%= doctor.confirmedAppointments %></td>
+                                <td><span class="rate-badge"><%= rate %>%</span></td>
+                                <td>
+                                    <% if (rate >= 80) { %>
+                                        <span class="performance-badge excellent"><i class="fas fa-trophy"></i> Excellent</span>
+                                    <% } else if (rate >= 60) { %>
+                                        <span class="performance-badge good"><i class="fas fa-thumbs-up"></i> Good</span>
+                                    <% } else { %>
+                                        <span class="performance-badge needs-improvement"><i class="fas fa-chart-line"></i> Needs Improvement</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="/admin/dashboard" class="btn-secondary">
+                <span class="btn-icon"><i class="fas fa-arrow-left"></i></span>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

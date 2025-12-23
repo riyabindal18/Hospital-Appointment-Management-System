@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Schedule</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .schedule-welcome {
+            background: linear-gradient(135deg, #00796b 0%, #009688 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        .schedule-welcome h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .schedule-welcome p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .availability-card, .current-availability-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e0f2f1;
+        }
+        .availability-card h2, .current-availability-card h2 {
+            color: #00796b;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0f2f1;
+            padding-bottom: 10px;
+        }
+        .availability-card .form-group {
+            margin-bottom: 20px;
+        }
+        .availability-card label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #00796b;
+        }
+        .availability-card select, .availability-card input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0f2f1;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        .availability-card select:focus, .availability-card input:focus {
+            outline: none;
+            border-color: #00796b;
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1);
+        }
+        .availability-card button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .availability-card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+        .current-availability ul {
+            list-style: none;
+            padding: 0;
+        }
+        .current-availability li {
+            background: #e0f2f1;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #00796b;
+        }
+        .appointments-section h2 {
+            color: #00796b;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .appointments-section h2:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: #00796b;
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+        .appointment-cards {
+            display: grid;
+            gap: 20px;
+        }
+        .appointment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e0f2f1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .appointment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .appointment-info h3 {
+            color: #00796b;
+            margin: 0 0 10px;
+            font-size: 1.3em;
+        }
+        .appointment-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-confirmed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .appointment-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .appointment-actions select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .appointment-actions button {
+            padding: 8px 16px;
+            background: #00796b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        .appointment-actions button:hover {
+            background: #004d40;
+        }
+        .no-appointments {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        @media (max-width: 768px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+            .appointment-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="schedule-welcome">
+            <h1>Doctor Dashboard</h1>
+            <p>Manage your schedule and appointments efficiently.</p>
+        </div>
+
+        <div class="schedule-grid">
+            <div>
+                <div class="availability-card">
+                    <h2>Set Availability</h2>
+                    <form action="/doctors/set-availability" method="POST">
+                        <div class="form-group">
+                            <label for="day">Day:</label>
+                            <select id="day" name="day" required>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startTime">Start Time:</label>
+                            <input type="time" id="startTime" name="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">End Time:</label>
+                            <input type="time" id="endTime" name="endTime" required>
+                        </div>
+                        <button type="submit">Add Availability</button>
+                    </form>
+                </div>
+
+                <div class="current-availability-card">
+                    <h2>Current Availability</h2>
+                    <div class="current-availability">
+                        <% if (doctor.availability.length === 0) { %>
+                            <p style="text-align: center; color: #777; font-style: italic;">No availability set.</p>
+                        <% } else { %>
+                            <ul>
+                                <% doctor.availability.forEach(slot => { %>
+                                    <li><%= slot.day %>: <%= slot.startTime %> - <%= slot.endTime %></li>
+                                <% }); %>
+                            </ul>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="appointments-section">
+                <h2>Your Appointments</h2>
+                <% if (appointments.length === 0) { %>
+                    <div class="no-appointments">
+                        <p>No appointments scheduled.</p>
+                        <p>Patients will appear here once they book appointments with you.</p>
+                    </div>
+                <% } else { %>
+                    <div class="appointment-cards">
+                        <% appointments.forEach(apt => { %>
+                            <div class="appointment-card">
+                                <div class="appointment-info">
+                                    <h3><%= apt.patientName %></h3>
+                                    <p><strong>Date:</strong> <%= apt.date.toDateString() %></p>
+                                    <p><strong>Status:</strong> <span class="status-badge status-<%= apt.status.toLowerCase() %>"><%= apt.status %></span></p>
+                                </div>
+                                <div class="appointment-actions">
+                                    <form action="/doctors/update-appointment" method="POST" style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="hidden" name="appointmentId" value="<%= apt._id %>">
+                                        <select name="status">
+                                            <option value="Pending" <%= apt.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Confirmed" <%= apt.status === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                            <option value="Cancelled" <%= apt.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                        </select>
+                                        <button type="submit">Update</button>
+                                    </form>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

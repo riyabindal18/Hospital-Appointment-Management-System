@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Medical Record</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e0f2f1;
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-header h1 {
+            color: #00796b;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .form-header p {
+            color: #666;
+            margin: 10px 0 0;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #00796b;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0f2f1;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00796b;
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+        .btn-cancel {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+        .record-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00796b;
+        }
+        .record-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Edit Medical Record</h1>
+                <p>Patient: <%= record.patient.name %></p>
+            </div>
+
+            <div class="record-info">
+                <p><strong>Doctor:</strong> <%= record.doctor.name %></p>
+                <p><strong>Date:</strong> <%= new Date(record.date).toLocaleDateString() %></p>
+            </div>
+
+            <form action="/medical-records/edit/<%= record._id %>" method="POST">
+                <div class="form-group">
+                    <label for="diagnosis">Diagnosis:</label>
+                    <textarea id="diagnosis" name="diagnosis" required><%= record.diagnosis %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="treatment">Treatment:</label>
+                    <textarea id="treatment" name="treatment" required><%= record.treatment %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Additional Notes:</label>
+                    <textarea id="notes" name="notes"><%= record.notes || '' %></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Update Medical Record</button>
+            </form>
+
+            <a href="/medical-records/patient/<%= record.patient._id %>" class="btn-cancel">Cancel</a>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

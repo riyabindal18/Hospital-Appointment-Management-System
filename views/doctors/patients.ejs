@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Patients</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .patients-welcome {
+            background: linear-gradient(135deg, #00796b 0%, #009688 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        .patients-welcome h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .patients-welcome p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .patients-section h2 {
+            color: #00796b;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .patients-section h2:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: #00796b;
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+        .patient-cards {
+            display: grid;
+            gap: 20px;
+        }
+        .patient-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e0f2f1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .patient-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .patient-info h3 {
+            color: #00796b;
+            margin: 0 0 10px;
+            font-size: 1.4em;
+        }
+        .patient-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .patient-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        .no-patients {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        @media (max-width: 768px) {
+            .patient-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .patient-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="patients-welcome">
+            <h1>My Patients</h1>
+            <p>Manage your patients' medical records and information.</p>
+        </div>
+
+        <div class="patients-section">
+            <h2>Patient List</h2>
+            <% if (patients.length === 0) { %>
+                <div class="no-patients">
+                    <p>No patients found.</p>
+                    <p>Patients will appear here once they book appointments with you.</p>
+                </div>
+            <% } else { %>
+                <div class="patient-cards">
+                    <% patients.forEach(patient => { %>
+                        <div class="patient-card">
+                            <div class="patient-info">
+                                <h3><%= patient.name %></h3>
+                                <p><strong>Email:</strong> <%= patient.email %></p>
+                                <p><strong>Last Appointment:</strong> <%= patient.lastAppointment.toLocaleDateString() %></p>
+                            </div>
+                            <div class="patient-actions">
+                                <a href="/medical-records/patient/<%= patient._id %>" class="btn btn-secondary">View Records</a>
+                                <a href="/medical-records/add/<%= patient._id %>" class="btn btn-primary">Add Record</a>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

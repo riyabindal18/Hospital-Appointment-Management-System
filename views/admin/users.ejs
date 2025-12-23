@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-users"></i> Manage Users</h1>
+            <p>Manage user accounts and permissions</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-primary" onclick="openModal()">
+                <span class="btn-icon"><i class="fas fa-plus"></i></span>
+                Add New User
+            </button>
+        </div>
+
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><span class="header-icon"><i class="fas fa-user"></i></span> Name</th>
+                        <th><span class="header-icon"><i class="fas fa-envelope"></i></span> Email</th>
+                        <th><span class="header-icon"><i class="fas fa-tag"></i></span> Role</th>
+                        <th><span class="header-icon"><i class="fas fa-chart-line"></i></span> Status</th>
+                        <th><span class="header-icon"><i class="fas fa-cogs"></i></span> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td class="user-name"><%= user.name %></td>
+                            <td><%= user.email %></td>
+                            <td>
+                                <span class="role-badge role-<%= user.role %>">
+                                    <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge <%= user.isActive ? 'status-active' : 'status-inactive' %>">
+                                    <%= user.isActive ? 'Active' : 'Inactive' %>
+                                </span>
+                            </td>
+                            <td>
+                                <form action="/admin/users/<%= user._id %>/toggle" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn-action <%= user.isActive ? 'btn-danger' : 'btn-success' %>">
+                                        <%= user.isActive ? 'Deactivate' : 'Activate' %>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="navigation">
+            <a href="/admin/dashboard" class="btn-secondary">
+                <span class="btn-icon"><i class="fas fa-arrow-left"></i></span>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .page-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .action-bar {
+            margin-bottom: 20px;
+        }
+
+        .data-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #00796b, #009688);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .data-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .header-icon {
+            margin-right: 8px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .role-patient {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .role-doctor {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .role-admin {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .status-inactive {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-action {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-action {
+            font-size: 0.85em;
+            padding: 6px 12px;
+        }
+
+        .navigation {
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .data-table-container {
+                overflow-x: auto;
+            }
+            .data-table {
+                min-width: 600px;
+            }
+        }
+    </style>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);">
+        <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 10px;">
+            <span class="close" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;" onclick="closeModal()">&times;</span>
+            <h2>Add New User</h2>
+            <form action="/admin/users" method="POST">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="name" style="display: block; margin-bottom: 5px; font-weight: 600;">Name:</label>
+                    <input type="text" id="name" name="name" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="email" style="display: block; margin-bottom: 5px; font-weight: 600;">Email:</label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="password" style="display: block; margin-bottom: 5px; font-weight: 600;">Password:</label>
+                    <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="role" style="display: block; margin-bottom: 5px; font-weight: 600;">Role:</label>
+                    <select id="role" name="role" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" style="background: #00796b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Add User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('addUserModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('addUserModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

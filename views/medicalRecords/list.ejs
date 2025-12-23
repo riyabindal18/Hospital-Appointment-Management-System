@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - <%= patient.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .records-header {
+            background: linear-gradient(135deg, #00796b 0%, #009688 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        .records-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .records-header p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .record-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e0f2f1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .record-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0f2f1;
+            padding-bottom: 10px;
+        }
+        .record-header h3 {
+            color: #00796b;
+            margin: 0;
+            font-size: 1.4em;
+        }
+        .record-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .record-content {
+            margin-bottom: 15px;
+        }
+        .record-content p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .record-content strong {
+            color: #00796b;
+        }
+        .record-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn-edit, .btn-delete {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn-edit {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn-edit:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        .btn-add {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.2);
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 121, 107, 0.3);
+        }
+        .btn-add:before {
+            content: '➕';
+            margin-right: 8px;
+        }
+        .no-records {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        @media (max-width: 768px) {
+            .record-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .record-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="records-header">
+            <h1>Medical Records</h1>
+            <p>Patient: <%= patient.name %></p>
+        </div>
+
+        <% if (canEdit) { %>
+            <a href="/medical-records/add/<%= patient._id %>" class="btn-add">Add New Record</a>
+        <% } %>
+
+        <% if (records.length === 0) { %>
+            <div class="no-records">
+                <p>No medical records found for this patient.</p>
+                <% if (user.role === 'doctor' || user.role === 'admin') { %>
+                    <p><a href="/medical-records/add/<%= patient._id %>">Add the first record</a></p>
+                <% } %>
+            </div>
+        <% } else { %>
+            <% records.forEach(record => { %>
+                <div class="record-card">
+                    <div class="record-header">
+                        <h3>Record by <%= record.doctor.name %></h3>
+                        <span class="record-date"><%= new Date(record.date).toLocaleDateString() %></span>
+                    </div>
+                    <div class="record-content">
+                        <p><strong>Diagnosis:</strong> <%= record.diagnosis %></p>
+                        <p><strong>Treatment:</strong> <%= record.treatment %></p>
+                        <% if (record.notes) { %>
+                            <p><strong>Notes:</strong> <%= record.notes %></p>
+                        <% } %>
+                        <% if (record.attachments && record.attachments.length > 0) { %>
+                            <p><strong>Attachments:</strong> <%= record.attachments.length %> file(s)</p>
+                        <% } %>
+                    </div>
+                    <% if (canEdit) { %>
+                        <div class="record-actions">
+                            <a href="/medical-records/edit/<%= record._id %>" class="btn-edit">Edit</a>
+                            <form action="/medical-records/delete/<%= record._id %>" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this record?')">
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+            <% }); %>
+        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

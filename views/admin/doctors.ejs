@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Doctors</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-user-md"></i> Manage Doctors</h1>
+            <p>Add and manage doctor profiles and specializations</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-primary" onclick="openModal()">
+                <span class="btn-icon"><i class="fas fa-plus"></i></span>
+                Add New Doctor
+            </button>
+        </div>
+
+        <% if (doctors.length === 0) { %>
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-user-md"></i></div>
+                <h3>No doctors found</h3>
+                <p>Get started by adding your first doctor</p>
+            </div>
+        <% } else { %>
+            <div class="doctors-grid">
+                <% doctors.forEach(doctor => { %>
+                    <div class="doctor-card">
+                        <div class="doctor-avatar">
+                            <span class="avatar-icon"><i class="fas fa-user-md"></i></span>
+                        </div>
+                        <div class="doctor-content">
+                            <div class="doctor-header">
+                                <h3><%= doctor.name %></h3>
+                                <span class="status-badge <%= doctor.user.isActive ? 'status-active' : 'status-inactive' %>">
+                                    <%= doctor.user.isActive ? 'Active' : 'Inactive' %>
+                                </span>
+                            </div>
+                            <div class="doctor-details">
+                                <p><span class="detail-icon"><i class="fas fa-envelope"></i></span> <%= doctor.user.email %></p>
+                                <p><span class="detail-icon"><i class="fas fa-stethoscope"></i></span> <%= doctor.specialization %></p>
+                                <p><span class="detail-icon"><i class="fas fa-calendar-alt"></i></span> <%= doctor.experience %> years experience</p>
+                                <p><span class="detail-icon"><i class="fas fa-phone"></i></span> <%= doctor.contact %></p>
+                                <% if (doctor.availability && doctor.availability.length > 0) { %>
+                                    <p><span class="detail-icon"><i class="fas fa-clock"></i></span>
+                                        <% doctor.availability.forEach((slot, index) => { %>
+                                            <%= slot.day %> (<%= slot.startTime %>-<%= slot.endTime %>)<%= index < doctor.availability.length - 1 ? ', ' : '' %>
+                                        <% }); %>
+                                    </p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <div class="navigation">
+            <a href="/admin/dashboard" class="btn-secondary">
+                <span class="btn-icon"><i class="fas fa-arrow-left"></i></span>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div id="addDoctorModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Doctor</h2>
+            <form action="/admin/doctors" method="POST">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="specialization">Specialization:</label>
+                    <select id="specialization" name="specialization" required>
+                        <option value="">Select Specialization</option>
+                        <option value="Cardiologist">Cardiologist</option>
+                        <option value="Dermatologist">Dermatologist</option>
+                        <option value="Neurologist">Neurologist</option>
+                        <option value="Pediatrician">Pediatrician</option>
+                        <option value="Orthopedic">Orthopedic</option>
+                        <option value="Gynecologist">Gynecologist</option>
+                        <option value="ENT Specialist">ENT Specialist</option>
+                        <option value="Psychiatrist">Psychiatrist</option>
+                        <option value="General Physician">General Physician</option>
+                        <option value="Ophthalmologist">Ophthalmologist</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="experience">Experience (years):</label>
+                    <input type="number" id="experience" name="experience" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="contact">Contact:</label>
+                    <input type="text" id="contact" name="contact" required>
+                </div>
+                <div class="form-group">
+                    <label for="photo">Photo URL (optional):</label>
+                    <input type="url" id="photo" name="photo">
+                </div>
+                <button type="submit" class="btn-submit">Add Doctor</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('addDoctorModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('addDoctorModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('addDoctorModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .page-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .action-bar {
+            margin-bottom: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: #adb5bd;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .doctor-avatar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .avatar-icon {
+            font-size: 3em;
+        }
+
+        .doctor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .doctor-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.4em;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .status-active {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+        .status-inactive {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .doctor-details p {
+            margin: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+        .detail-icon {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .navigation {
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #00796b;
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1);
+        }
+        .btn-submit {
+            background: linear-gradient(45deg, #00796b, #009688);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+            .doctor-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

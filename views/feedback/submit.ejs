@@ -1,0 +1,181 @@
+<%- include('../partials/header') %>
+
+<style>
+.feedback-form-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.feedback-form-container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  border: 2px solid #e0f2f1;
+}
+
+.feedback-form-container h2 {
+  color: #00796b;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.2em;
+  font-weight: 700;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #00796b;
+  font-size: 1.1em;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0f2f1;
+  border-radius: 10px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #00796b;
+  box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1);
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.star {
+  font-size: 2em;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.star:hover,
+.star.active {
+  color: #ffc107;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(45deg, #00796b, #009688);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 121, 107, 0.3);
+}
+
+@media (max-width: 600px) {
+  .feedback-form-container {
+    padding: 20px;
+    margin: 10px;
+  }
+}
+</style>
+
+<section class="feedback-form-section">
+  <div class="feedback-form-container">
+    <h2>Submit Feedback</h2>
+    <form method="POST" action="/feedback/submit" id="feedbackForm">
+      <div class="form-group">
+        <label for="type">Feedback Type:</label>
+        <select name="type" id="type" required onchange="toggleDoctorSelect()">
+          <option value="hospital">Hospital</option>
+          <option value="doctor">Doctor</option>
+        </select>
+      </div>
+
+      <div id="doctorSelect" style="display: none;" class="form-group">
+        <label for="doctorId">Select Doctor:</label>
+        <select name="doctorId" id="doctorId">
+          <% doctors.forEach(doctor => { %>
+            <option value="<%= doctor.id %>"><%= doctor.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Rating:</label>
+        <div class="star-rating" id="starRating">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+        <input type="hidden" name="rating" id="ratingInput" required />
+      </div>
+
+      <div class="form-group">
+        <label for="comment">Comment (optional):</label>
+        <textarea name="comment" id="comment" rows="4" placeholder="Share your thoughts..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Submit Feedback</button>
+    </form>
+  </div>
+</section>
+
+<script>
+function toggleDoctorSelect() {
+  const type = document.getElementById('type').value;
+  const doctorSelect = document.getElementById('doctorSelect');
+  if (type === 'doctor') {
+    doctorSelect.style.display = 'block';
+  } else {
+    doctorSelect.style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const stars = document.querySelectorAll('.star');
+  const ratingInput = document.getElementById('ratingInput');
+
+  stars.forEach(star => {
+    star.addEventListener('click', function() {
+      const value = this.getAttribute('data-value');
+      ratingInput.value = value;
+
+      stars.forEach(s => {
+        if (s.getAttribute('data-value') <= value) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+    });
+  });
+});
+</script>
+
+<%- include('../partials/footer') %>
